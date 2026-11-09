@@ -1,0 +1,8 @@
+{
+  "appId": "com.tradewise.ai",
+  "appName": "TradeWise AI",
+  "webDir": "www",
+  "plugins": {
+    "CapacitorHttp": { "enabled": true }
+  }
+}

@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<title>TradeWise AI</title>
+<style>
+:root{
+  --bg:#101114; --header:#0b0c0e; --panel:#191b20; --panel2:#20232a;
+  --gold:#d6ad5c; --text:#f2f2f2; --muted:#a4a8b1; --green:#58c58b; --red:#e07878;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px}
+body{display:flex;flex-direction:column;overscroll-behavior:none}
+header{background:var(--header);padding:calc(var(--safe-top) + 12px) 18px 12px;flex:none;
+  display:flex;align-items:baseline;gap:6px;border-bottom:1px solid #1d2026}
+header .logo{font-weight:800;font-size:21px;letter-spacing:.5px;color:var(--gold)}
+header .logo b{color:var(--text)}
+header .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--gold);text-align:right}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 24px}
+.page{display:none;max-width:720px;margin:0 auto}
+.page.active{display:block}
+h1{font-size:25px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px;line-height:1.4}
+h2{font-size:12px;letter-spacing:1px;color:var(--gold);margin:22px 0 9px;font-weight:700;text-transform:uppercase}
+.card{background:var(--panel);border-radius:12px;padding:15px 16px;margin-bottom:10px}
+.card h3{margin:0 0 6px;color:var(--gold);font-size:13px;letter-spacing:.6px}
+.card p{margin:0;line-height:1.45;font-size:14.5px}
+.warn{color:var(--red);font-size:13px;line-height:1.4;margin:16px 0}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid #2b2f38;border-radius:10px;
+  padding:13px 12px;font-size:16px;font-family:inherit;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a4a8b1' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:-1px}
+.row{display:flex;gap:10px}.row>div{flex:1;min-width:0}
+button{font-family:inherit;font-size:16px;font-weight:700;border:0;border-radius:11px;padding:14px 16px;
+  background:var(--panel2);color:var(--text);width:100%;margin-top:12px}
+button.gold{background:var(--gold);color:#171717}
+button:active{opacity:.8}
+button:disabled{opacity:.5}
+.check{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--muted)}
+.check input{width:22px;height:22px;flex:none;padding:0;appearance:auto;-webkit-appearance:checkbox;accent-color:var(--gold)}
+.small{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px}
+#preview{max-width:100%;max-height:220px;border-radius:10px;margin-top:12px;display:none}
+#status{font-size:13px;color:var(--muted);margin:10px 0 0;min-height:18px}
+#result{background:var(--panel);border-radius:12px;padding:15px;white-space:pre-wrap;line-height:1.5;font-size:14.5px;
+  min-height:120px;word-wrap:break-word;overflow-wrap:anywhere}
+.lesson b{display:block;color:var(--gold);font-size:14px;margin-bottom:4px}
+.lesson span{font-size:13.5px;line-height:1.4}
+#calcOut{white-space:pre-wrap;line-height:1.55}
+.entry{background:var(--panel);border-radius:12px;padding:13px 14px;margin-bottom:9px;position:relative}
+.entry small{color:var(--gold);font-weight:700;font-size:12px;display:block;margin-bottom:4px;padding-right:60px}
+.entry .t{font-size:14.5px;line-height:1.4;word-wrap:break-word;overflow-wrap:anywhere}
+.entry .del{position:absolute;top:8px;right:8px;width:auto;margin:0;padding:6px 10px;font-size:12px;background:var(--panel2);color:var(--muted)}
+nav{flex:none;display:flex;background:var(--header);border-top:1px solid #1d2026;padding-bottom:var(--safe-bottom)}
+nav button{flex:1;margin:0;border-radius:0;background:none;color:var(--muted);font-size:10.5px;font-weight:600;
+  padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.active{color:var(--gold)}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">TRADEWISE <b>AI</b></span>
+  <span class="tag">EDUCATION MODE<br>DEMO BUILD</span>
+</header>
+
+<main id="main">
+  <!-- OVERVIEW -->
+  <section class="page active" id="p-overview">
+    <h1>Your trading workspace</h1>
+    <p class="sub">A learning-first companion for understanding markets and planning risk.</p>
+    <div class="card"><h3>CHART REVIEW</h3><p>Upload a chart screenshot and work through a structured educational checklist.</p></div>
+    <div class="card"><h3>TRADING ACADEMY</h3><p>Learn market structure, candles, risk, psychology and more.</p></div>
+    <div class="card"><h3>RISK TOOLS</h3><p>Estimate position size and risk/reward before you practise.</p></div>
+    <h2>Getting started</h2>
+    <div class="card"><p>1. Start with the Academy before risking real money.</p></div>
+    <div class="card"><p>2. Use the Scanner for conditional chart analysis; confirm any setup independently.</p></div>
+    <div class="card"><p>3. Practise with a demo account and keep a journal.</p></div>
+    <div class="card"><p>4. Never risk money you cannot afford to lose.</p></div>
+    <p class="warn">Important: This demo does not connect to a broker, execute trades, or provide personalised financial advice.</p>
+  </section>
+
+  <!-- SCANNER -->
+  <section class="page" id="p-scanner">
+    <h1>Chart scanner</h1>
+    <p class="sub">Upload a chart. AI can review the visible price action when you add your own API key.</p>
+
+    <h2>1 · Choose a chart image</h2>
+    <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+    <button class="gold" id="pick" style="margin-top:0">Choose chart screenshot</button>
+    <div class="small" id="fileName">No chart selected</div>
+    <img id="preview" alt="Chart preview">
+
+    <h2>2 · AI image analysis</h2>
+    <div class="row">
+      <div><label for="provider" style="margin-top:0">AI provider</label>
+        <select id="provider">
+          <option>OpenAI</option><option>Google Gemini</option><option>OpenRouter</option>
+        </select></div>
+    </div>
+    <label for="model">Model (pick or type any model ID)</label>
+    <input id="model" list="modelList" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <datalist id="modelList"></datalist>
+    <label for="apikey" id="keyLabel">OpenAI API key</label>
+    <input id="apikey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste only the key">
+    <label class="check"><input type="checkbox" id="remember"> Remember this key on this device (stored unencrypted in app storage)</label>
+    <p class="small">By default your key is kept in memory only and is cleared when you close the app. API usage may incur charges from your provider.</p>
+
+    <div class="row">
+      <div><label for="market">Market</label>
+        <select id="market"><option>Crypto</option><option>Forex</option><option>Stocks</option><option>Indices</option><option>Commodities</option></select></div>
+      <div><label for="timeframe">Timeframe</label>
+        <select id="timeframe"><option>1m</option><option>5m</option><option>15m</option><option>30m</option><option selected>1H</option><option>4H</option><option>1D</option><option>1W</option></select></div>
+    </div>
+    <label for="symbol">Ticker / pair (optional)</label>
+    <input id="symbol" autocapitalize="characters" autocomplete="off">
+    <button class="gold" id="analyze">Analyze uploaded chart</button>
+    <div id="status">Ready</div>
+
+    <h2>3 · Analysis</h2>
+    <div id="result">Choose a chart image, pick an AI provider (OpenAI, Google Gemini or OpenRouter), enter your API key, then tap Analyze uploaded chart.
+
+The analysis will explain the trend in plain English and give a conditional BUY, SELL or WAIT assessment only when the screenshot provides enough evidence. It will not invent unreadable prices or guarantee a result.</div>
+  </section>
+
+  <!-- ACADEMY -->
+  <section class="page" id="p-academy">
+    <h1>Trading academy</h1>
+    <p class="sub">Short lessons designed to build knowledge before practice.</p>
+    <div id="lessons"></div>
+  </section>
+
+  <!-- CALCULATORS -->
+  <section class="page" id="p-calc">
+    <h1>Trading calculators</h1>
+    <p class="sub">Illustrative calculations for practice. They do not recommend a trade.</p>
+    <div class="card">
+      <label for="bal" style="margin-top:0">Account balance</label><input id="bal" inputmode="decimal" value="1000">
+      <label for="risk">Risk (%)</label><input id="risk" inputmode="decimal" value="1">
+      <label for="stop">Stop distance (points / pips)</label><input id="stop" inputmode="decimal" value="20">
+      <label for="rr">Reward-to-risk multiple</label><input id="rr" inputmode="decimal" value="2">
+      <button class="gold" id="calcBtn">Calculate</button>
+    </div>
+    <div class="card"><p id="calcOut">Enter values and calculate.</p></div>
+    <p class="small">Position size is instrument-dependent. This simple example calculates a risk budget and target amount only; it does not calculate lots or contracts.</p>
+  </section>
+
+  <!-- JOURNAL -->
+  <section class="page" id="p-journal">
+    <h1>Trading journal</h1>
+    <p class="sub">Record practice decisions and review your process. Entries are saved on this device.</p>
+    <div class="card">
+      <label for="jMarket" style="margin-top:0">Market</label>
+      <select id="jMarket"><option>Forex</option><option>Crypto</option><option>Stocks</option><option>Indices</option></select>
+      <label for="jSetup">Setup / observation</label>
+      <input id="jSetup" autocomplete="off">
+      <label for="jResult">Outcome</label>
+      <select id="jResult"><option>Practice / not entered</option><option>Win (simulated)</option><option>Loss (simulated)</option><option>Breakeven (simulated)</option></select>
+      <button class="gold" id="jAdd">Add journal entry</button>
+    </div>
+    <h2>Entries</h2>
+    <div id="entries"></div>
+  </section>
+
+  <!-- PREVIEW -->
+  <section class="page" id="p-preview">
+    <h1>Preview &amp; access</h1>
+    <p class="sub">A sample product preview and a simple access-flow mock-up.</p>
+    <div class="card">
+      <h3>YOUR TRADING LEARNING TOOLKIT</h3>
+      <p>Chart review • Guided courses • Risk calculators • Practice journal • Trading safety</p>
+    </div>
+    <div class="card">
+      <h3>PREVIEW SCRIPT</h3>
+      <p id="script">Welcome to TradeWise AI. In this preview, you can see how the app helps you learn market structure, review chart observations, understand risk and keep a practice journal. The full learning toolkit is designed to support informed practice — not promise profits or send guaranteed buy/sell signals.</p>
+      <button id="copy">Copy preview script</button>
+    </div>
+    <h2>Purchase / licensing</h2>
+    <div class="card"><p>This prototype has no payment processor, customer accounts or licence server yet. Those need to be connected before commercial sales. Do not collect customer payment using this demo.</p></div>
+  </section>
+</main>
+
+<nav id="nav">
+  <button data-p="overview" class="active"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+  <button data-p="scanner"><svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 6-8"/><path d="M3 21h18"/></svg>Scanner</button>
+  <button data-p="academy"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v5c0 1 2.2 2.5 5 2.5s5-1.5 5-2.5v-5"/></svg>Academy</button>
+  <button data-p="calc"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></svg>Calc</button>
+  <button data-p="journal"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>Journal</button>
+  <button data-p="preview"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Info</button>
+</nav>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+
+/* ---------- safe storage ---------- */
+var store={
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},
+  del:function(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ---------- navigation ---------- */
+var navBtns=document.querySelectorAll("#nav button");
+function show(p){
+  document.querySelectorAll(".page").forEach(function(s){s.classList.toggle("active",s.id==="p-"+p)});
+  navBtns.forEach(function(b){b.classList.toggle("active",b.dataset.p===p)});
+  $("main").scrollTop=0;
+}
+navBtns.forEach(function(b){b.addEventListener("click",function(){show(b.dataset.p)})});
+
+/* ---------- academy ---------- */
+var lessons=[
+ ["01  Market foundations","What markets are, buyers and sellers, spreads, liquidity and sessions."],
+ ["02  Candlesticks","Open, high, low and close; candle bodies, wicks and context."],
+ ["03  Market structure","Swing highs/lows, trends, ranges and breakouts."],
+ ["04  Support & resistance","How to mark zones and why levels can fail."],
+ ["05  Risk management","Risk per trade, position sizing, drawdown and risk/reward."],
+ ["06  Stop-loss & take-profit","Planning invalidation and exits before a practice trade."],
+ ["07  Trading psychology","Patience, journaling, avoiding revenge trading and overconfidence."],
+ ["08  Strategy testing","Backtesting, sample size, demo practice and tracking results."],
+ ["09  Forex, stocks & crypto","Key differences, trading hours, volatility and market-specific risks."],
+ ["10  Scams & safety","Leverage risks, fake gurus, guaranteed-return claims and account security."]
+];
+lessons.forEach(function(l){
+  var d=document.createElement("div");d.className="card lesson";
+  var b=document.createElement("b");b.textContent=l[0];
+  var s=document.createElement("span");s.textContent=l[1];
+  d.appendChild(b);d.appendChild(s);$("lessons").appendChild(d);
+});
+
+/* ---------- calculator ---------- */
+$("calcBtn").addEventListener("click",function(){
+  var bal=parseFloat($("bal").value.replace(",",".")),risk=parseFloat($("risk").value.replace(",",".")),
+      stop=parseFloat($("stop").value.replace(",",".")),rr=parseFloat($("rr").value.replace(",","."));
+  var out=$("calcOut");
+  if(!(bal>0&&risk>0&&stop>0&&rr>0&&risk<=100)){out.textContent="Please enter positive numbers. Risk must be 100% or less.";return}
+  var amt=bal*risk/100, f=function(n){return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})};
+  out.textContent="Risk budget: "+f(amt)+"\nIllustrative target at "+rr+":1: "+f(amt*rr)+"\nStop distance entered: "+stop+
+    "\n\nThis is not a position-size instruction. Check contract specifications and fees with your broker.";
+});
+
+/* ---------- journal (persisted on device) ---------- */
+var entries=[];
+try{entries=JSON.parse(store.get("tw_journal")||"[]")||[]}catch(e){entries=[]}
+function renderJournal(){
+  var box=$("entries");box.textContent="";
+  if(!entries.length){var p=document.createElement("p");p.className="small";p.textContent="No entries yet. Add a practice note above.";box.appendChild(p);return}
+  entries.slice().reverse().forEach(function(en,ri){
+    var idx=entries.length-1-ri;
+    var d=document.createElement("div");d.className="entry";
+    var s=document.createElement("small");s.textContent=en.market+"  |  "+en.result+"  |  "+en.date;
+    var t=document.createElement("div");t.className="t";t.textContent=en.setup;
+    var x=document.createElement("button");x.className="del";x.textContent="Delete";
+    x.addEventListener("click",function(){entries.splice(idx,1);store.set("tw_journal",JSON.stringify(entries));renderJournal()});
+    d.appendChild(s);d.appendChild(t);d.appendChild(x);box.appendChild(d);
+  });
+}
+$("jAdd").addEventListener("click",function(){
+  var setup=$("jSetup").value.trim();
+  if(!setup){alert("Enter a short description of your observation first.");return}
+  entries.push({market:$("jMarket").value,result:$("jResult").value,setup:setup,date:new Date().toLocaleDateString()});
+  store.set("tw_journal",JSON.stringify(entries));
+  $("jSetup").value="";renderJournal();
+});
+renderJournal();
+
+/* ---------- preview page ---------- */
+$("copy").addEventListener("click",function(){
+  var txt=$("script").textContent,b=$("copy");
+  function done(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy preview script"},1500)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){})}
+});
+
+/* ---------- providers ---------- */
+var PROVIDERS={
+  "OpenAI":{model:"gpt-4.1-mini",models:["gpt-4.1-mini","gpt-4.1","gpt-4o-mini"],
+    hint:"OpenAI developer platform (platform.openai.com)"},
+  "Google Gemini":{model:"gemini-3.8-flash",fallback:"gemini-flash-latest",
+    models:["gemini-3.8-flash","gemini-3.6-flash","gemini-3-flash-preview","gemini-flash-latest"],
+    hint:"Google AI Studio (aistudio.google.com/apikey)"},
+  "OpenRouter":{model:"nvidia/nemotron-3.5-super-vl:free",
+    models:["nvidia/nemotron-3.5-super-vl:free","google/gemma-4-31b-it:free","google/gemma-4-26b-a4b-it:free",
+            "thinkingmachines/inkling:free","nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"],
+    hint:"OpenRouter (openrouter.ai/keys). Free models end in :free and have daily limits"}
+};
+var chartFile=null;
+
+function onProvider(){
+  var p=$("provider").value,cfg=PROVIDERS[p];
+  $("keyLabel").textContent=p+" API key";
+  $("model").value=cfg.model;
+  var dl=$("modelList");dl.textContent="";
+  cfg.models.forEach(function(m){var o=document.createElement("option");o.value=m;dl.appendChild(o)});
+  var saved=store.get("tw_key_"+p);
+  $("apikey").value=saved||"";
+  $("remember").checked=!!saved;
+  store.set("tw_provider",p);
+}
+$("provider").addEventListener("change",onProvider);
+var savedProv=store.get("tw_provider");
+if(savedProv&&PROVIDERS[savedProv])$("provider").value=savedProv;
+onProvider();
+
+// the model box is a free-text field with suggestions; clear it on focus so the full list shows
+$("model").addEventListener("focus",function(){this.dataset.prev=this.value;this.value=""});
+$("model").addEventListener("blur",function(){if(!this.value.trim())this.value=this.dataset.prev||PROVIDERS[$("provider").value].model});
+
+/* ---------- image picking ---------- */
+$("pick").addEventListener("click",function(){$("file").click()});
+$("file").addEventListener("change",function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  chartFile=f;$("fileName").textContent=f.name||"Chart selected";
+  var url=URL.createObjectURL(f),im=$("preview");
+  im.src=url;im.style.display="block";
+});
+
+// Downscale big phone screenshots to keep requests small and fast; returns {mime,data(base64)}
+function prepareImage(file){
+  return new Promise(function(resolve,reject){
+    var type=file.type||"image/png";
+    if(["image/png","image/jpeg","image/webp","image/gif"].indexOf(type)<0)return reject(new Error("Use a PNG, JPG, WEBP or GIF chart image."));
+    if(file.size>20*1024*1024)return reject(new Error("Please choose an image smaller than 20 MB."));
+    var url=URL.createObjectURL(file),img=new Image();
+    img.onload=function(){
+      var max=2000,w=img.naturalWidth,h=img.naturalHeight,s=Math.min(1,max/Math.max(w,h));
+      var c=document.createElement("canvas");c.width=Math.round(w*s);c.height=Math.round(h*s);
+      var ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);
+      var d=c.toDataURL("image/jpeg",0.9);
+      resolve({mime:"image/jpeg",data:d.split(",")[1]});
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);reject(new Error("Could not read that image."))};
+    img.src=url;
+  });
+}
+
+/* ---------- AI request ---------- */
+function buildPrompt(market,tf,ticker){
+  return "You are an educational technical-chart reviewer. Inspect the attached chart image itself. "+
+  "Market: "+market+". Timeframe: "+tf+". Ticker: "+ticker+". "+
+  "Explain everything in beginner-friendly plain English. Do not output Markdown symbols, hashtags, "+
+  "asterisks, backticks, or raw escape sequences. Use short headings and ordinary bullet characters. "+
+  "Return these sections in this order: "+
+  "SIGNAL: choose BUY, SELL, WAIT, or NOT ENOUGH INFORMATION. "+
+  "CHART DIRECTION: up, down, sideways, or unclear, with a simple explanation. "+
+  "WHAT I CAN SEE: describe visible candles/price movement and the most recent visible high and low. "+
+  "SUPPORT AND RESISTANCE: give approximate price zones only if the axis labels are readable; otherwise say prices are unreadable. "+
+  "TRADE PLAN: only if there is a clear, evidence-based setup, give a conditional entry area, invalidation/stop area, and one or two target areas. "+
+  "Never invent prices. If a price cannot be read, say so and give no numeric level. "+
+  "WHY WAIT: explain what confirmation is missing when signal is WAIT. "+
+  "RISK: explain that this is educational, not a guarantee or personalised financial advice. "+
+  "A BUY or SELL label must be conditional on visible evidence, not a command to trade. "+
+  "If the image is not a readable price chart, return NOT ENOUGH INFORMATION. "+
+  "The image is a static screenshot; you have no live market feed and must not claim otherwise.";
+}
+var SYSTEM="You carefully analyse chart screenshots and communicate uncertainty. Never fabricate chart details or prices.";
+
+function HttpError(status,body){this.status=status;this.body=body}
+
+async function post(url,headers,payload){
+  var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},90000);
+  try{
+    var r=await fetch(url,{method:"POST",headers:headers,body:JSON.stringify(payload),signal:ctl.signal});
+    var txt=await r.text();
+    if(!r.ok)throw new HttpError(r.status,txt.slice(0,700));
+    try{return JSON.parse(txt)}catch(e){throw new Error("The provider returned an unreadable response.")}
+  }catch(e){
+    if(e.name==="AbortError")throw new Error("The request timed out after 90 seconds.");
+    throw e;
+  }finally{clearTimeout(to)}
+}
+
+async function callProvider(provider,model,key,img,prompt){
+  if(provider==="Google Gemini"){
+    var payload={systemInstruction:{parts:[{text:SYSTEM}]},
+      contents:[{role:"user",parts:[{text:prompt},{inline_data:{mime_type:img.mime,data:img.data}}]}],
+      generationConfig:{temperature:0.2,maxOutputTokens:4096}};
+    var hdr={"x-goog-api-key":key,"Content-Type":"application/json"};
+    var base="https://generativelanguage.googleapis.com/v1beta/models/";
+    var res;
+    try{res=await post(base+encodeURIComponent(model)+":generateContent",hdr,payload)}
+    catch(e){
+      var fb=PROVIDERS[provider].fallback;
+      if(e instanceof HttpError&&e.status===404&&fb&&model!==fb)res=await post(base+fb+":generateContent",hdr,payload);
+      else throw e;
+    }
+    var c=(res.candidates||[])[0];
+    if(!c){var why=(res.promptFeedback||{}).blockReason||"no response returned";throw new Error("Gemini returned no answer ("+why+").")}
+    var ans=((c.content||{}).parts||[]).map(function(p){return p.text||""}).join("").trim();
+    if(!ans)throw new Error("Gemini returned an empty answer (finish reason: "+(c.finishReason||"unknown")+").");
+    return ans;
+  }
+  var isOR=provider==="OpenRouter";
+  var url=isOR?"https://openrouter.ai/api/v1/chat/completions":"https://api.openai.com/v1/chat/completions";
+  var h={"Authorization":"Bearer "+key,"Content-Type":"application/json"};
+  if(isOR)h["X-Title"]="TradeWise AI";
+  var body={model:model,messages:[{role:"system",content:SYSTEM},{role:"user",content:[
+      {type:"text",text:prompt},
+      {type:"image_url",image_url:{url:"data:"+img.mime+";base64,"+img.data,detail:"high"}}]}],
+    max_tokens:isOR?2500:1100,temperature:0.2};
+  var r=await post(url,h,body);
+  if(r.error)throw new Error(typeof r.error==="string"?r.error:(r.error.message||JSON.stringify(r.error)));
+  var msg=((r.choices||[{}])[0]||{}).message||{},a=msg.content||"";
+  if(Array.isArray(a))a=a.map(function(p){return (p&&p.text)||""}).join("");
+  if(!String(a).trim())throw new Error(provider+" returned an empty answer. The model may not support images or may be busy; try another model.");
+  return String(a);
+}
+
+function setStatus(t,c){var s=$("status");s.textContent=t;s.style.color=c||"var(--muted)"}
+function showResult(t){$("result").textContent=t}
+
+$("analyze").addEventListener("click",async function(){
+  if(!chartFile){alert("Please upload a chart screenshot first.");return}
+  var provider=$("provider").value,key=$("apikey").value.trim(),
+      model=$("model").value.trim()||PROVIDERS[provider].model;
+  if(!key){
+    showResult("AI ANALYSIS NOT STARTED\n\nYou have selected an image, but no AI service is connected. Add your own "+provider+
+      " API key above to enable visual chart analysis.\n\nWithout an AI connection, this app cannot see the chart and will not guess a BUY or SELL signal.\n\nYou can get a key from the "+
+      PROVIDERS[provider].hint+". API usage is billed or quota-limited by your provider.");
+    setStatus("API key required","var(--red)");return;
+  }
+  if(key.length>200||/\s/.test(key)||/[^\x21-\x7e]/.test(key)){
+    showResult("INVALID API KEY\n\nThe API key box contains text that is not a valid key (spaces, line breaks or other text). Clear the box and paste only the key itself.\n\nGemini keys start with AIza or AQ. OpenAI keys usually start with sk-.");
+    setStatus("Invalid key text","var(--red)");return;
+  }
+  if($("remember").checked)store.set("tw_key_"+provider,key);else store.del("tw_key_"+provider);
+
+  var btn=$("analyze");btn.disabled=true;
+  showResult("Analyzing the uploaded chart…\n\nThis can take a little while. Please keep the app open.");
+  setStatus("Analyzing…","var(--gold)");
+  try{
+    var img=await prepareImage(chartFile);
+    var ans=await callProvider(provider,model,key,img,buildPrompt($("market").value,$("timeframe").value,$("symbol").value.trim()||"Not provided"));
+    showResult(ans.trim());setStatus("Analysis complete","var(--green)");
+  }catch(e){
+    var msg;
+    if(e instanceof HttpError){
+      msg="API request failed ("+e.status+"). "+e.body;
+      if(e.status===401&&provider==="Google Gemini")msg+="\n\nGoogle is rolling out new AQ. keys that some accounts cannot use with the REST API (error ACCESS_TOKEN_TYPE_UNSUPPORTED). If you see that, create a standard AIza key: in Google Cloud Console > APIs & Services > Credentials > Create credentials > API key (with the Generative Language API enabled), or try another Google project.";
+      if(e.status===429)msg+="\n\nRate limit or daily free quota reached. Wait a while, or try a different model.";
+      if(e.status===404&&provider==="OpenRouter")msg+="\n\nThat model may not exist, may not accept images, or may be unavailable right now. Try another model from the list.";
+    }else{
+      msg=(e&&e.message)||String(e);
+      if(/failed to fetch|networkerror|load failed/i.test(msg))msg="Could not reach "+provider+". Check your internet connection. ("+msg+")";
+    }
+    showResult("ANALYSIS FAILED\n\n"+msg+"\n\nCheck your internet connection, that the selected provider matches your API key, your account quota/billing, and model access. No trade signal was generated.");
+    setStatus("Analysis failed","var(--red)");
+  }finally{btn.disabled=false}
+});
+
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){
+  navigator.serviceWorker.register("sw.js").catch(function(){});
+}
+})();
+</script>
+</body>
+</html>
